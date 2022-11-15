@@ -1,3 +1,7 @@
+/*
+ * Declarações
+ */
+
 %{
 #include <iostream>
 #include <string>
@@ -20,6 +24,8 @@ void yyerror(string);
 string gentempcode();
 %}
 
+// Especificação de todos os tokens
+
 %token TK_NUM
 %token TK_MAIN TK_ID TK_TIPO_INT
 %token TK_FIM TK_ERROR
@@ -27,6 +33,10 @@ string gentempcode();
 %start S
 
 %left '+'
+
+/*
+ * Regras de produção
+ */
 
 %%
 
@@ -84,6 +94,10 @@ E 			: E '+' E
 			;
 
 %%
+
+/*
+ * Rotinas em C do usuário
+ */
 
 #include "lex.yy.c"
 
