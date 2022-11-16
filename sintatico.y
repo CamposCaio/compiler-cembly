@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <vector>
 
 #define YYSTYPE atributos
 
@@ -40,17 +41,30 @@ string gentempcode();
 
 %%
 
-S 			: TK_TIPO_INT TK_MAIN '(' ')' BLOCO
+/* -------------------- Início da Árvore -------------------- */
+
+S 		: TK_START 'main' COMANDOS TK_FINISH 'main'
 			{
-				cout << "/*Compilador FOCA*/\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nint main(void)\n{\n" << $5.traducao << "\treturn 0;\n}" << endl; 
+				cout << 
+					"#include <iostream> \
+					\n#include<string.h> \
+					\n#include<stdio.h> \
+					\n#include<vector> \
+					\nint main(void)\n{\n"
+					<< $3.traducao << 
+					"\treturn 0;\n}\n"; 
 			}
 			;
 
-BLOCO		: '{' COMANDOS '}'
+/* -------------------- Bloco -------------------- */
+
+BLOCO		: TK_BEGIN COMANDOS TK_END
 			{
 				$$.traducao = $2.traducao;
 			}
 			;
+
+/* -------------------- Comandos -------------------- */
 
 COMANDOS	: COMANDO COMANDOS
 			{
@@ -62,36 +76,86 @@ COMANDOS	: COMANDO COMANDOS
 			}
 			;
 
-COMANDO 	: E ';'
+/* -------------------- Comando -------------------- */
+
+COMANDO 	: TK_ATRIB '(' E ')'
+					| WRITE '(' E ')'
+					| READ '(' E ')'
+
+					| TK_IF '(' E ')'
+					| TK_ELSEIF '(' E ')'
+					| TK_LOOP '(' E ')'
+					| EQUAL '(' E ')'
 			;
 
-E 			: E '+' E
+/* -------------------- Expressões Aritiméticas -------------------- */
+
+ARITMETICO 	: TK_ADD '(' E ')'
+			;
+
+/* -------------------- Expressões -------------------- */
+
+E 		: TK_ID ',' TK_INT ',' TK_NUM_ARRAY
+// <varName>, TK_INT, TK_NUM_ARRAY
 			{
-				$$.label = gentempcode();
-				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-					" = " + $1.label + " + " + $3.label + ";\n";
+				$$.label = $1.label
+				$$.traducao = "\t std::vector<int> " + $$.label + ";\n" + $5.traducao;
+				// std::vector<int> t<n1>; + TK_NUM_ARRAY
 			}
-			| E '-' E
+
+// <varName>, INT, <number>
+			| TK_ID ',' TK_INT ',' TK_NUM
 			{
-				$$.label = gentempcode();
-				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-					" = " + $1.label + " - " + $3.label + ";\n";
+				$$.label = $1.label
+				$$.traducao = "\t int " + $$.label + " = " + $5.label + ";\n";
+				// int t<n> = <number>;
 			}
-			| TK_ID '=' E
+
+// <varName>, INT
+			| TK_ID ',' TK_INT
 			{
-				$$.traducao = $1.traducao + $3.traducao + "\t" + $1.label + " = " + $3.label + ";\n";
+				$$.label = $1.label
+				$$.traducao = "\t int " + $$.label + ";\n";
+				// int t<n>;
 			}
+
+// <number>
 			| TK_NUM
 			{
 				$$.label = gentempcode();
 				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
+				// t<new> = <number>
 			}
+
+// <varName>
 			| TK_ID
 			{
 				$$.label = gentempcode();
 				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
+				// t<new> = <varName>;
 			}
 			;
+
+/* -------------------- Array de números -------------------- */
+
+TK_NUM_ARRAY 	: TK_NUM_ARRAY ',' TK_NUM_ARRAY
+			{
+				$$.label = $1.label;
+				$$.traducao = "\t" + $$.label + ".pushback(" + $2.label + ");\n";
+				// t<n1>.pushback(t<n2>);
+			}
+
+// <number>
+			| TK_NUM
+			{
+				$$.label = gentempcode();
+				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
+				// t<new> = <number>;
+			}
+			;
+
+/* -------------------- Fim da Árvore -------------------- */
+
 
 %%
 
