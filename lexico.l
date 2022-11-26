@@ -50,6 +50,8 @@ ABREPARENTESES ("(")
 FECHAPARENTESES (")")
 /*Palavras reservadas*/
 RESERVADA   ("INT"|"FLOAT"|"CHAR")
+/*Inválido*/
+.{printf("%s é uma porção de código inválida.\n",yytext);}
 %%
 
 "\n"		{}
