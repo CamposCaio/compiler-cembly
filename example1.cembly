@@ -6,7 +6,7 @@ FOR(a=0; a<4) BEGIN
     a = a + 1;
 END;
 
-WRITE(O novo valor de a eh + INT a);
-WRITE(Valor de var eh + FLOAT var);
+WRITE(O novo valor de a eh , INT a);
+WRITE(Valor de var eh , FLOAT var);
 
 FINISH

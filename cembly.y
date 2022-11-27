@@ -385,7 +385,7 @@ write_comando: WRITE '('  lista_letras  ')'		//imprime na tela apenas strings
 		 $$->esq = $3;
 		 $$->dir = NULL;
 		}
-	       |WRITE '('  lista_letras '+' tipo_numerico lista_letras ')' 	//imprime na tela strings e mais uma variavel numerica
+	       |WRITE '('  lista_letras ',' tipo_numerico lista_letras ')' 	//imprime na tela strings e mais uma variavel numerica
 		{
 		 $$ = (No*)malloc(sizeof(No));
 		 $$->token = WRITE; 
@@ -393,7 +393,7 @@ write_comando: WRITE '('  lista_letras  ')'		//imprime na tela apenas strings
 		 $$->dir = $5;
 		 $$->lookahead1 = $6;
 		}
-	       |WRITE '('  lista_letras '+' tipo_char lista_letras ')'		//imprime na tela strings e mais uma variavel do tipo char
+	       |WRITE '('  lista_letras ',' tipo_char lista_letras ')'		//imprime na tela strings e mais uma variavel do tipo char
 		{
 		 $$ = (No*)malloc(sizeof(No));
 		 $$->token = WRITE; 
