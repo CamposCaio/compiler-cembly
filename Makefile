@@ -1,13 +1,10 @@
 all: 	
-		clear
-		lex lexico.l
-		yacc -d sintatico.y
-		g++ -o glf y.tab.c -ll
-
-		./glf < exemplo.cembly
+	clear
+	bison -d cembly.y
+	flex cembly.l
+	g++ cembly.tab.c lex.yy.c -o main -lm
 
 clean:
-	rm y.tab.c
-	rm y.tab.h
+	rm cembly.tab.c
+	rm cembly.tab.h
 	rm lex.yy.c
-	rm glf

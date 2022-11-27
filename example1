@@ -1,0 +1,12 @@
+main
+int a;;
+float var = 0.1;
+
+for(a=0; a<4) start
+    a = a + 1;
+end;
+
+write(O novo valor de a eh + int a);
+write(Valor de var eh + float var);
+
+endmain
