@@ -16,21 +16,21 @@ extern "C" int yylex();
 %}
 
 %%
-"for" 		{return FOR;}
-"while"	{return WHILE;}
-"if"		{return IF;}
-"else"		{return ELSE;}
-"int"  	{return INT;}
-"char"		{return CHAR;}
-"float"  	{return FLOAT;}
-"write"  	{return WRITE;}
-"read_int"  	{return READ_INT;}
-"read_float"  	{return READ_FLOAT;}
-"read_char"  	{return READ_CHAR;}
-"main"	{return MAIN;}
-"endmain"		{return ENDMAIN;}
-"start"	{return START;}
-"end"	{return END;}
+"FOR" 		{return FOR;}
+"WHILE"	{return WHILE;}
+"IF"		{return IF;}
+"ELSE"		{return ELSE;}
+"INT"  	{return INT;}
+"CHAR"		{return CHAR;}
+"FLOAT"  	{return FLOAT;}
+"WRITE"  	{return WRITE;}
+"READ_INT"  	{return READ_INT;}
+"READ_FLOAT"  	{return READ_FLOAT;}
+"READ_CHAR"  	{return READ_CHAR;}
+"START"	{return MAIN;}
+"FINISH"		{return ENDMAIN;}
+"BEGIN"	{return START;}
+"END"	{return END;}
 
 [-+]?[0-9]+("."[0-9]*)?([eE]"-"?[0-9]*)? { yylval.pont->val = atof(yytext);
                                            return NUM;
