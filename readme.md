@@ -2,5 +2,6 @@
 
 ### How to start?
 
+    make clean
     make
     ./cembly <path to cembly code>

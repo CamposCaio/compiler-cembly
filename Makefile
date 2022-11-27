@@ -5,7 +5,7 @@ all:
 	g++ cembly.tab.c lex.yy.c -o cembly -lm
 
 clean:
-	rm cembly
 	rm cembly.tab.c
 	rm cembly.tab.h
 	rm lex.yy.c
+	rm cembly
