@@ -1,9 +1,8 @@
 # Cembly compiler C++ and Assembly
 
 ### Como construir o projeto?
-Execute os seguintes comandos no terminal:
+Execute o seguinte comando no terminal:
 
-    make clean
     make
 
 ### Como utilizar o compilador?
@@ -28,3 +27,7 @@ Exemplo:
 Agora você já pode executar o arquivo:
 
     ./example1
+
+### Scripts make
+Para limpar os arquivos gerados utilize
+    make clean
