@@ -309,8 +309,8 @@ exp:
 /* Bloco com os varios comandos na linguagem */ 
 comando:  
     atribuicao
-|    bloco
-|    while_comando
+|   bloco
+|   while_comando
 |	  for_comando
 |	  if_comando
 |	  write_comando
