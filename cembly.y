@@ -46,7 +46,7 @@ char *var_nome;
 %token <pont> READ_FLOAT /*le FLOAT*/ 
 %token <pont> READ_CHAR /*le char*/ 
 %token <pont> NUM 	/*numeros*/
-%token <pont> LETRA	/*strings*/
+%token <pont> TK_STRING	/*strings*/
 %token <pont> COMANDO /*comando*/
 %token <pont> MEI	/*<=*/
 %token <pont> MI	/*>=*/
@@ -131,10 +131,10 @@ bloco:
 /* Bloco String */
 /* Reconhece Strings */
 string:
-      LETRA       
+      TK_STRING       
 			{ 
 			  $$ = (No*)malloc(sizeof(No));
-        $$->token = LETRA;
+        $$->token = TK_STRING;
 		    strcpy($$->nome, yylval.pont->nome);
 		    $$->esq = NULL;
 		    $$->dir = NULL;
@@ -581,7 +581,7 @@ void imprima(No *raiz){
       fprintf(saida,"%g", raiz->val);
       break;
 
-    case LETRA:
+    case TK_STRING:
       fprintf(saida,"%s ", raiz->nome);
       break;
 
