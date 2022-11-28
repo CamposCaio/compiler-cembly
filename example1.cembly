@@ -1,8 +1,8 @@
 START
-INT a;;
+INT a = 0;
 FLOAT var = 0.1;
 
-FOR(a=0; a<4) BEGIN
+LOOP(a<4) BEGIN
     a = a + 1;
 END;
 
