@@ -40,9 +40,8 @@ extern "C" int yylex();
 ("true"|"TRUE")                 {return TK_BOOL_TRUE;}
 ("false"|"FALSE")               {return TK_BOOL_FALSE;}
 
-/*Identificadores de função - Ler / Escrever / Atribuição*/
+/*Identificadores de função - Ler / Escrever*/
 
-("ATRIB")                       {return TK_ATRIB;}
 ("READ")                        {return TK_READ;}
 ("WRITE")                       {return TK_WRITE;}
 
@@ -96,7 +95,7 @@ extern "C" int yylex();
 
 /*Palavras reservadas*/
 
-("TK_INT"|"TK_FLOAT"|"TK_CHAR")          {return TK_RESERVADA;}
+("INT"|"FLOAT"|"CHAR")          {return TK_RESERVADA;}
 ("START")                       {return TK_START;}
 ("FINISH")                      {return TK_FINISH;}
 
