@@ -1,0 +1,25 @@
+START
+
+INT n = 0;
+INT first = 0;
+INT second = 1;
+INT result = 0;
+INT i = 0;
+
+WRITE("Print the first N digits of the Fibonacci seuqnce. N?\n");
+READ_INT(n);
+WRITE("Your Fibonacci seuqence with", INT n," digits is:\n")
+
+LOOP(n<i) BEGIN
+    IF (i<=1) BEGIN
+        result = i;
+    ELSE BEGIN
+        result = (first + second);
+        first = second;
+        second = result;
+    END;
+    END;
+    WRITE(INT result," ");
+END;
+
+FINISH
