@@ -27,8 +27,8 @@ extern "C" int yylex();
                                 return TK_INT;}
 [-+]?[0-9]+("."([0-9]+))?      {yylval.pont->val = atof(yytext);
                                 return TK_FLOAT;}
-("'")[a-zA-Z]|[0-9]("'")       {strncpy(yylval.pont->nome, yytext, 256);
-                                return TK_CHAR;}
+("\"")([a-zA-Z]|[0-9])+("\"")  {strncpy(yylval.pont->nome, yytext, 256);
+                                return TK_STRING;}
 
 /*Identificador de variável*/
 
