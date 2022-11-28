@@ -28,7 +28,7 @@ extern "C" int yylex();
 "READ_FLOAT"  	{return READ_FLOAT;}
 "READ_CHAR"  	{return READ_CHAR;}
 "START"	{return MAIN;}
-"FINISH"		{return ENDMAIN;}
+"FINISH"		{return FINISH;}
 "BEGIN"	{return START;}
 "END"	{return END;}
 

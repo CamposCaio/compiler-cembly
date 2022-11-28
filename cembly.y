@@ -60,7 +60,7 @@ char *var_nome;
 %token <pont> START	/*inicio*/
 %token <pont> END	/*fim*/
 %token <pont> MAIN	/*fim*/
-%token <pont> ENDMAIN	/*fim*/
+%token <pont> FINISH	/*fim*/
 
 /*Não Terminais*/
 %type <pont> programa
@@ -94,7 +94,7 @@ char *var_nome;
 
 /* Bloco Programa */
 /*Inicia a arvore de Tokens*/
-programa: MAIN lista_comandos ENDMAIN
+programa: MAIN lista_comandos FINISH
 			{ 
 			  raiz = $2; 
 			} 
