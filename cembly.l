@@ -40,6 +40,11 @@ extern "C" int yylex();
 ("true"|"TRUE")                 {return TK_BOOL_TRUE;}
 ("false"|"FALSE")               {return TK_BOOL_FALSE;}
 
+/*Identificadores de função - Ler / Escrever*/
+
+("READ")                        {return TK_READ;}
+("WRITE")                       {return TK_WRITE;}
+
 /*Identificadores de função - Expressões Aritméticas*/
 
 ("ADD")                         {return TK_ADD;}
