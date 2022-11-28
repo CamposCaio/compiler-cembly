@@ -57,10 +57,11 @@ char *var_nome;
 %token <pont> INT	/*inteiro*/
 %token <pont> FLOAT/*FLOAT*/
 %token <pont> CHAR  /*char*/
-%token <pont> START	/*inicio*/
-%token <pont> END	/*fim*/
-%token <pont> MAIN	/*fim*/
-%token <pont> ENDMAIN	/*fim*/
+%token <pont> TK_ID
+%token <pont> TK_BEGIN	/*inicio do bloco*/
+%token <pont> TK_END	/*fim do bloco*/
+%token <pont> TK_START	/*inicio do programa*/
+%token <pont> TK_FINISH	/*fim do programa*/
 
 /*Não Terminais*/
 %type <pont> programa
@@ -84,8 +85,8 @@ char *var_nome;
 %type <pont> while_comando
 %type <pont> for_comando
 %type <pont> tipo_char
-%type <pont> lista_letras
-
+%type <pont> tipo_id
+%type <pont> tipo_qualquer
 
 %right '='
 %left  '-' '+'
@@ -94,298 +95,344 @@ char *var_nome;
 
 /* Bloco Programa */
 /*Inicia a arvore de Tokens*/
-programa: MAIN lista_comandos ENDMAIN
+programa: 
+      TK_START lista_comandos TK_FINISH
 			{ 
 			  raiz = $2; 
 			} 
-
+;
 
 
 
 /* Bloco Lista De comandos */
 /* Guarda um comando ou uma lista deles*/
-lista_comandos: comando ';' 
+lista_comandos: 
+      comando ';' 
 			{ 
 			  $$ = (No*)malloc(sizeof(No)); 
 			  $1->lookahead = 0;				
 			  $$ = $1; 
 			}
-                  | comando ';' lista_comandos 
+|     comando ';' lista_comandos 
 			{ 
 			  $$ = (No*)malloc(sizeof(No));
 			  $1->lookahead = $3;
 			  $$ = $1;
 			}
-
+;
 /* Bloco bloco */
 /* Abre os comandos*/
-bloco: START lista_comandos END 
+bloco: 
+      TK_BEGIN lista_comandos TK_END 
 			{ 
 			  $$ = $2; 
 			} 
-
+;
 /* Bloco String */
 /* Reconhece Strings */
-string: LETRA       
+string:
+      LETRA       
 			{ 
 			  $$ = (No*)malloc(sizeof(No));
-                          $$->token = LETRA;
-		          strcpy($$->nome, yylval.pont->nome);
-		          $$->esq = NULL;
-		          $$->dir = NULL;
-                        }
+        $$->token = LETRA;
+		    strcpy($$->nome, yylval.pont->nome);
+		    $$->esq = NULL;
+		    $$->dir = NULL;
+      }
+;
 
-/* Bloco String */
-lista_letras: string lista_letras
+/* Bloco ID */
+/* Reconhece qualquer variavel (letra seguida de letras ou numeros) */
+tipo_id: 
+      TK_ID
 			{ 
-			  $$ = (No*)malloc(sizeof(No)); 			
-			  $1->lookahead = $2;
-			  $$ = $1;
+			  $$ = (No*)malloc(sizeof(No));
+        $$->token = TK_ID;
+        strcpy($$->nome, yylval.pont->nome);
+        $$->esq = NULL;
+		    $$->dir = NULL;
 			}
-	      |string
-	      ;
+|	    string
+;
 
 /* Bloco Tipo Basico */
 /* Reconhece os Tipos Basicos Numericos*/
-tipo_numerico: INT
+tipo_numerico: 
+      INT
 			{ 
 			  $$ = (No*)malloc(sizeof(No));
-                          $$->token = INT;
-		          strcpy($$->nome, yylval.pont->nome);//Vai guardar inteiro nesta val
-		          $$->esq = NULL;
-		          $$->dir = NULL;
-                        }
-	   	    |FLOAT
+        $$->token = INT;
+		    strcpy($$->nome, yylval.pont->nome);//Vai guardar inteiro nesta val
+		    $$->esq = NULL;
+		    $$->dir = NULL;
+      }
+|     FLOAT
 			{ 
 			  $$ = (No*)malloc(sizeof(No));
-                          $$->token = FLOAT;
-		          strcpy($$->nome, yylval.pont->nome);//Vai guardar FLOAT nesta val
-		          $$->esq = NULL;
-		          $$->dir = NULL;
-                        }
-	   
+        $$->token = FLOAT;
+		    strcpy($$->nome, yylval.pont->nome);//Vai guardar FLOAT nesta val
+		    $$->esq = NULL;
+		    $$->dir = NULL;
+      }
+;	   
 
 /* Bloco Tipo Basico */
 /* Reconhece o Tipo Char*/
-tipo_char: CHAR
+tipo_char:
+      CHAR
 			{ 
 			  $$ = (No*)malloc(sizeof(No));
-                          $$->token = CHAR;
-		          strcpy($$->nome, yylval.pont->nome);//Vai guardar char nesta val
-		          $$->esq = NULL;
-		          $$->dir = NULL;
-                        }
-  
+        $$->token = CHAR;
+		    strcpy($$->nome, yylval.pont->nome);//Vai guardar char nesta val
+		    $$->esq = NULL;
+		    $$->dir = NULL;
+      }
+;
+/* Bloco Tipo Qualquer */
+/* Reconhece os tipos anteriores */
+tipo_qualquer:
+      tipo_char
+      {
+      $$ = (No*)malloc(sizeof(No));
+      $$->token = TK_ID;
+      $$ = $1;
+      }
+|     tipo_numerico
+      {
+      $$ = (No*)malloc(sizeof(No));
+      $$->token = TK_ID;
+      $$ = $1;
+      }
+|     string
+      {
+      $$ = (No*)malloc(sizeof(No));
+      $$->token = TK_ID;
+      $$ = $1;
+      }
+;
+
 /* Bloco Atribuicao */
 /* Bloco para reconhecer atribuicao e declaracao de variaveis*/
-atribuicao: tipo_numerico lista_letras '=' exp //reconhece atribuições, tipo numerico, onde primeiro é definido uma variavel 
-			{ 				//e logo em seguida ja é atribuido um valor
-			  $$ = (No*)malloc(sizeof(No));
-			  $$->token = '=';				
-			  $$->esq = $2;									
-		          $$->lookahead2 = $1;					 
-			  $$->dir = $4;				
-			  $$->lookahead3 = NULL;				
-                        }
-		|tipo_char lista_letras '=' '\'' exp '\''//reconhece atribuições, tipo character, onde primeiro é definido 
-			{				    //uma variavel e logo em seguida ja é atribuido um valor
-			  $$ = (No*)malloc(sizeof(No)); 
-			  $$->token = '=';
-			  $$->esq = $2;
-		          $$->lookahead2 = $1;
-			  $$->lookahead3 = $1;
-			  $$->dir = $5;
-                        }
-	       |tipo_numerico lista_letras ';' //reconhece atribuições onde apenas é declarada a variavel, tipo numerico
-			{ 
-			  $$ = (No*)malloc(sizeof(No));
-			  $$->token = ';';
-			  $$->esq = $1;
-			  $$->dir = $2;
-                        }
-		|tipo_char lista_letras';' //reconhece atribuições onde apenas é declarada a variavel, tipo character
-			{ 
-			  $$ = (No*)malloc(sizeof(No));
-			  $$->token = ';';
-			  $$->esq = $1;
-			  $$->dir = $2;
-                        }
-		| lista_letras '=' '\'' exp '\'' //reconhece atribuições, onde ja foi declarada a variavel, apenas character
-			{ 
-			  $$ = (No*)malloc(sizeof(No));
-			  $$->token = '=';
-			  $$->esq = $1;
-			  $$->dir = $4;
-			  $$->lookahead3 = $1;
-                        }
-		| lista_letras '=' exp //reconhece atribuições, onde ja foi declarada a variavel, apenas numeros
-			{ 
-			  $$ = (No*)malloc(sizeof(No));
-			  $$->token = '=';
-			  $$->esq = $1;
-			  $$->dir = $3;
-			  $$->lookahead2 = NULL;
-			  $$->lookahead3 = NULL;
-                        }
-
+atribuicao: 
+    tipo_numerico tipo_id '=' exp //reconhece atribuições, tipo numerico, onde primeiro é definido uma variavel 
+		{ 				//e logo em seguida ja é atribuido um valor
+		  $$ = (No*)malloc(sizeof(No));
+		  $$->token = '=';				
+		  $$->esq = $2;									
+		  $$->lookahead2 = $1;					 
+		  $$->dir = $4;				
+		  $$->lookahead3 = NULL;				
+    }
+|   tipo_char tipo_id '=' '\'' exp '\''//reconhece atribuições, tipo character, onde primeiro é definido 
+		{				    //uma variavel e logo em seguida ja é atribuido um valor
+		  $$ = (No*)malloc(sizeof(No)); 
+		  $$->token = '=';
+		  $$->esq = $2;
+		  $$->lookahead2 = $1;
+		  $$->lookahead3 = $1;
+		  $$->dir = $5;
+    }
+|   tipo_numerico tipo_id ';' //reconhece atribuições onde apenas é declarada a variavel, tipo numerico
+		{ 
+			$$ = (No*)malloc(sizeof(No));
+			$$->token = ';';
+			$$->esq = $1;
+			$$->dir = $2;
+    }
+		tipo_char tipo_id';' //reconhece atribuições onde apenas é declarada a variavel, tipo character
+		{ 
+		  $$ = (No*)malloc(sizeof(No));
+		  $$->token = ';';
+		  $$->esq = $1;
+		  $$->dir = $2;
+    }
+|   tipo_id '=' '\'' exp '\'' //reconhece atribuições, onde ja foi declarada a variavel, apenas character
+		{ 
+			$$ = (No*)malloc(sizeof(No));
+			$$->token = '=';
+			$$->esq = $1;
+			$$->dir = $4;
+			$$->lookahead3 = $1;
+    }
+|   tipo_id '=' exp //reconhece atribuições, onde ja foi declarada a variavel, apenas numeros
+		{ 
+			$$ = (No*)malloc(sizeof(No));
+			$$->token = '=';
+			$$->esq = $1;
+			$$->dir = $3;
+			$$->lookahead2 = NULL;
+			$$->lookahead3 = NULL;
+    }
+;
 /* Bloco exp */
 /* Bloco com as expressões numericas e as strings */
-exp:   lista_letras	//string
-     | NUM       	//numeros   
-			{ 
-			  $$ = (No*)malloc(sizeof(No));
-                          $$->token = NUM;
-		          $$->val = yylval.pont->val;
-		          $$->esq = NULL;
-		          $$->esq = NULL;
-                        }
-             
-     | '-' NUM      	//numeros negativos
-			{ 
-			  $$ = (No*)malloc(sizeof(No));
-                          $$->token = NUM;
-		          $$->val = - yylval.pont->val;
-		          $$->esq = NULL;
-		          $$->esq = NULL;
-                        }
-             
-     | exp '+' exp   //reconhece somas
-			{ 
-			  $$ = (No*)malloc(sizeof(No));
-                          $$->token = '+';
-		          $$->esq = $1;
-		          $$->dir = $3;
-                        }
-     | exp '-' exp   //reconhece subtrações	  
-			{ 
-			  $$ = (No*)malloc(sizeof(No));
-                     	  $$->token = '-';
-		     	  $$->esq = $1;
-		      	  $$->dir = $3;
-                   	}
-     |'(' exp ')' 	   //Possibilita o reconhecimento de uma exp que esteja entre parentese
-			{ 
-			  $$ = (No*)malloc(sizeof(No));
-                          $$ = $2;
-                        }
-
+exp:   
+    tipo_id	//string
+|   NUM       	//numeros   
+		{ 
+			$$ = (No*)malloc(sizeof(No));
+      $$->token = NUM;
+		  $$->val = yylval.pont->val;
+		  $$->esq = NULL;
+		  $$->esq = NULL;
+    }            
+|   '-' NUM      	//numeros negativos
+		{ 
+			$$ = (No*)malloc(sizeof(No));
+      $$->token = NUM;
+		  $$->val = - yylval.pont->val;
+		  $$->esq = NULL;
+		  $$->esq = NULL;
+    }
+|   exp '+' exp   //reconhece somas
+		{ 
+			$$ = (No*)malloc(sizeof(No));
+      $$->token = '+';
+		  $$->esq = $1;
+		  $$->dir = $3;
+    }
+|   exp '-' exp   //reconhece subtrações	  
+		{ 
+			$$ = (No*)malloc(sizeof(No));
+      $$->token = '-';
+		  $$->esq = $1;
+		  $$->dir = $3;
+    }
+|   '(' exp ')' 	   //Possibilita o reconhecimento de uma exp que esteja entre parentese
+		{ 
+			$$ = (No*)malloc(sizeof(No));
+      $$ = $2;
+    }
+;
 						
 /* Bloco comando */ 
 /* Bloco com os varios comandos na linguagem */ 
-comando:  atribuicao
-        | bloco
-	| while_comando
-	| for_comando
-	| if_comando
-	| write_comando
-	| read_comando
-	;
+comando:  
+    atribuicao
+|    bloco
+|    while_comando
+|	  for_comando
+|	  if_comando
+|	  write_comando
+|	  read_comando
+;
 
 /* Bloco Comparacao */
 /* Bloco com as comparacoes logicas */
-comparacao: igual
-          | maior
-          | menor
-	  | maior_igual
-          | menor_igual
-	  | diferente
-	  ;
+comparacao: 
+    igual
+|    maior
+|    menor
+|	  maior_igual
+|    menor_igual
+|	  diferente
+;
 
 
 /* Bloco Diferente */
 /* Bloco com a regra "diferente de"*/
-diferente: exp TI exp     
-			  {
-			    $$ = (No*)malloc(sizeof(No));
-                            $$->token = TI;
-			    $$->esq = $1;
-			    $$->dir = $3;
-			    $$->lookahead1 = NULL;
-                          }
+diferente: 
+    exp TI exp     
+		{
+			$$ = (No*)malloc(sizeof(No));
+      $$->token = TI;
+			$$->esq = $1;
+			$$->dir = $3;
+			$$->lookahead1 = NULL;
+    }
+;
 /* Bloco Igual */
 /* Bloco com a regra "igual a"*/
-igual: exp II exp     
-			  {
-			    $$ = (No*)malloc(sizeof(No));
-                            $$->token = II;
-			    $$->esq = $1;
-			    $$->dir = $3;
-			    $$->lookahead1 = NULL;
-                          }
-
+igual: 
+    exp II exp     
+		{
+			$$ = (No*)malloc(sizeof(No));
+      $$->token = II;
+			$$->esq = $1;
+			$$->dir = $3;
+			$$->lookahead1 = NULL;
+    }
+;
 /* Bloco Menor*/
 /* Bloco com a regra "menor que"*/
-menor: exp ME exp     
-			  {
-			    $$ = (No*)malloc(sizeof(No));
-                            $$->token = ME;
-			    $$->esq = $1;
-			    $$->dir = $3;
-			    $$->lookahead1 = NULL;
-                          }
-
+menor: 
+    exp ME exp     
+		{
+			$$ = (No*)malloc(sizeof(No));
+      $$->token = ME;
+			$$->esq = $1;
+			$$->dir = $3;
+			$$->lookahead1 = NULL;
+    }
+;
 /* Bloco Maior*/
 /* Bloco com a regra "maior que"*/
-maior: exp MA exp     
-			  {
-			    $$ = (No*)malloc(sizeof(No));
-                            $$->token = MA;
-			    $$->esq = $1;
-			    $$->dir = $3;
-			    $$->lookahead1 = NULL;
-                          }
-
+maior: 
+    exp MA exp     
+		{
+			$$ = (No*)malloc(sizeof(No));
+      $$->token = MA;
+			$$->esq = $1;
+			$$->dir = $3;
+			$$->lookahead1 = NULL;
+    }
+;
 /* Bloco Menor Ou Igual*/
 /* Bloco com a regra "menor ou igual a"*/
-menor_igual: exp MEI exp     
-			  {
-			    $$ = (No*)malloc(sizeof(No));
-                            $$->token = MEI;
-			    $$->esq = $1;
-			    $$->dir = $3;
-			    $$->lookahead1 = NULL;
-                          }
-
+menor_igual: 
+    exp MEI exp     
+		{
+			$$ = (No*)malloc(sizeof(No));
+      $$->token = MEI;
+			$$->esq = $1;
+			$$->dir = $3;
+			$$->lookahead1 = NULL;
+    }
+;
 /* Bloco Maior Ou Igual*/
 /* Bloco com a regra "maior ou igual a"*/
-maior_igual: exp MI exp     
-			  {
-			    $$ = (No*)malloc(sizeof(No));
-                            $$->token = MI;
-			    $$->esq = $1;
-			    $$->dir = $3;
-			    $$->lookahead1 = NULL;
-                          }
-
+maior_igual: 
+    exp MI exp     
+		{
+			$$ = (No*)malloc(sizeof(No));
+      $$->token = MI;
+			$$->esq = $1;
+			$$->dir = $3;
+			$$->lookahead1 = NULL;
+    }
+;
 
 /* comando Se  */
 /* Bloco com a regra para definir o eveto IF*/
-if_comando:  IF '(' comparacao ')' bloco	//IF com apenas comparações
-                { $$ = (No*)malloc(sizeof(No));
+if_comando:  
+    IF '(' comparacao ')' bloco	//IF com apenas comparações
+    { 
+      $$ = (No*)malloc(sizeof(No));
 		  $$->token = IF;
 		  $$->lookahead1 = $3;
 		  $$->esq = $5;
 		  $$->dir = NULL;
-                }
-
-           | IF '(' comparacao ')' bloco ELSE bloco  //IF e ELSE com apenas comparações
-                { $$ = (No*)malloc(sizeof(No));
+    }
+    IF '(' comparacao ')' bloco ELSE bloco  //IF e ELSE com apenas comparações
+    { 
+      $$ = (No*)malloc(sizeof(No));
 		  $$->token = IF;
 		  $$->lookahead1 = $3;
 		  $$->esq = $5;
 		  $$->dir = $7;
-                }
-
+    }
+;
 /* comando Imprimir */
 /* Bloco com a regra para definir o eveto printf*/
-write_comando: WRITE '('  lista_letras  ')'		//imprime na tela apenas strings
+write_comando: 
+    WRITE '('  tipo_id  ')'		//imprime na tela apenas strings
 		{
 		 $$ = (No*)malloc(sizeof(No));
 		 $$->token = WRITE; 
 		 $$->esq = $3;
 		 $$->dir = NULL;
 		}
-	       |WRITE '('  lista_letras ',' tipo_numerico lista_letras ')' 	//imprime na tela strings e mais uma variavel numerica
+	  WRITE '('  tipo_id ',' tipo_numerico tipo_id ')' 	//imprime na tela strings e mais uma variavel numerica
 		{
 		 $$ = (No*)malloc(sizeof(No));
 		 $$->token = WRITE; 
@@ -393,7 +440,7 @@ write_comando: WRITE '('  lista_letras  ')'		//imprime na tela apenas strings
 		 $$->dir = $5;
 		 $$->lookahead1 = $6;
 		}
-	       |WRITE '('  lista_letras ',' tipo_char lista_letras ')'		//imprime na tela strings e mais uma variavel do tipo char
+	  WRITE '('  tipo_id ',' tipo_char tipo_id ')'		//imprime na tela strings e mais uma variavel do tipo char
 		{
 		 $$ = (No*)malloc(sizeof(No));
 		 $$->token = WRITE; 
@@ -401,54 +448,58 @@ write_comando: WRITE '('  lista_letras  ')'		//imprime na tela apenas strings
 		 $$->dir = $5;
 		 $$->lookahead1 = $6;
 		}
-
+;
 /* comando Read */
 /* Bloco com a regra para definir o eveto scanf para int*/
-read_comando: READ_INT '(' lista_letras  ')'		//Le do teclado um inteiro
+read_comando: 
+    READ_INT '(' tipo_id  ')'		//Le do teclado um inteiro
 		{
 		 $$ = (No*)malloc(sizeof(No));
 		 $$->token = READ_INT; 
 		 $$->esq = $3;
 		 $$->dir = NULL;
 		}
-	|READ_FLOAT '(' lista_letras  ')'		//Le do teclado um FLOAT
+	READ_FLOAT '(' tipo_id  ')'		//Le do teclado um FLOAT
 		{
 		 $$ = (No*)malloc(sizeof(No));
 		 $$->token = READ_FLOAT; 
 		 $$->esq = $3;
 		 $$->dir = NULL;
 		}
-	|READ_CHAR '(' lista_letras  ')'		//Le do teclado um FLOAT
+	READ_CHAR '(' tipo_id  ')'		//Le do teclado um FLOAT
 		{
 		 $$ = (No*)malloc(sizeof(No));
 		 $$->token = READ_CHAR; 
 		 $$->esq = $3;
 		 $$->dir = NULL;
 		}
-
+;
 
 /* comando Para */
 /* Bloco com a regra para definir o eveto FOR*/
-for_comando: FOR '(' atribuicao ';' comparacao ')' bloco	//possibilita comando FOR com regras com apenas numeros ou com variaveis
-		{
+for_comando: 
+      FOR '(' atribuicao ';' comparacao ')' bloco	//possibilita comando FOR com regras com apenas numeros ou com variaveis
+		  {
 		   $$ = (No*)malloc(sizeof(No));
 		   $$->token = FOR;
 		   $$->lookahead1 = $3;
 		   $$->lookahead2 = $5;
 		   $$->esq = $7;
 		   $$->dir = NULL;
-		 }
-
+		  }
+;
 
 /* comando Enquanto */
-while_comando: WHILE '(' comparacao ')' bloco 	//possibilita comando WHILE
-                     { $$ = (No*)malloc(sizeof(No));
-		       $$->token = WHILE;
-		       $$->lookahead1 = $3;
-		       $$->esq = $5;
-		       $$->dir = NULL;
-                     }
-
+while_comando: 
+            WHILE '(' comparacao ')' bloco 	//possibilita comando WHILE
+            {
+              $$ = (No*)malloc(sizeof(No));
+              $$->token = WHILE;
+              $$->lookahead1 = $3;
+              $$->esq = $5;
+              $$->dir = NULL;
+            }
+;
 
 
 %%
