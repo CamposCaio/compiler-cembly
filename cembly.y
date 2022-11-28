@@ -43,7 +43,7 @@ char *var_nome;
 %token <pont> ELSE 	/*seNao*/
 %token <pont> WRITE/*imprime*/ 
 %token <pont> READ_INT /*le inteiro*/ 
-%token <pont> READ_FLOAT /*le TK_FLOAT*/ 
+%token <pont> READ_FLOAT /*le FLOAT*/ 
 %token <pont> READ_CHAR /*le char*/ 
 %token <pont> NUM 	/*numeros*/
 %token <pont> TK_STRING	/*strings*/
@@ -54,9 +54,9 @@ char *var_nome;
 %token <pont> TI	/*!=*/
 %token <pont> MA	/*<*/
 %token <pont> ME	/*>*/
-%token <pont> TK_INT	/*inteiro*/
-%token <pont> TK_FLOAT/*TK_FLOAT*/
-%token <pont> TK_LETRA  /*char*/
+%token <pont> INT	/*inteiro*/
+%token <pont> FLOAT/*FLOAT*/
+%token <pont> CHAR  /*char*/
 %token <pont> TK_ID
 %token <pont> TK_BEGIN	/*inicio do bloco*/
 %token <pont> TK_END	/*fim do bloco*/
@@ -158,19 +158,19 @@ tipo_id:
 /* Bloco Tipo Basico */
 /* Reconhece os Tipos Basicos Numericos*/
 tipo_numerico: 
-      TK_INT
+      INT
 			{ 
 			  $$ = (No*)malloc(sizeof(No));
-        $$->token = TK_INT;
+        $$->token = INT;
 		    strcpy($$->nome, yylval.pont->nome);//Vai guardar inteiro nesta val
 		    $$->esq = NULL;
 		    $$->dir = NULL;
       }
-|     TK_FLOAT
+|     FLOAT
 			{ 
 			  $$ = (No*)malloc(sizeof(No));
-        $$->token = TK_FLOAT;
-		    strcpy($$->nome, yylval.pont->nome);//Vai guardar TK_FLOAT nesta val
+        $$->token = FLOAT;
+		    strcpy($$->nome, yylval.pont->nome);//Vai guardar FLOAT nesta val
 		    $$->esq = NULL;
 		    $$->dir = NULL;
       }
@@ -179,10 +179,10 @@ tipo_numerico:
 /* Bloco Tipo Basico */
 /* Reconhece o Tipo Char*/
 tipo_char:
-      TK_LETRA
+      CHAR
 			{ 
 			  $$ = (No*)malloc(sizeof(No));
-        $$->token = TK_LETRA;
+        $$->token = CHAR;
 		    strcpy($$->nome, yylval.pont->nome);//Vai guardar char nesta val
 		    $$->esq = NULL;
 		    $$->dir = NULL;
@@ -459,14 +459,14 @@ read_comando:
 		 $$->esq = $3;
 		 $$->dir = NULL;
 		}
-	READ_FLOAT '(' tipo_id  ')'		//Le do teclado um TK_FLOAT
+	READ_FLOAT '(' tipo_id  ')'		//Le do teclado um FLOAT
 		{
 		 $$ = (No*)malloc(sizeof(No));
 		 $$->token = READ_FLOAT; 
 		 $$->esq = $3;
 		 $$->dir = NULL;
 		}
-	READ_CHAR '(' tipo_id  ')'		//Le do teclado um TK_FLOAT
+	READ_CHAR '(' tipo_id  ')'		//Le do teclado um FLOAT
 		{
 		 $$ = (No*)malloc(sizeof(No));
 		 $$->token = READ_CHAR; 
@@ -585,15 +585,15 @@ void imprima(No *raiz){
       fprintf(saida,"%s ", raiz->nome);
       break;
 
-   case TK_INT:
+   case INT:
       fprintf(saida,"int ");
       break;
 
-   case TK_FLOAT:
+   case FLOAT:
       fprintf(saida,"float ");
       break;
 
-   case TK_LETRA:
+   case CHAR:
       fprintf(saida,"char ");
       break;
 
@@ -888,7 +888,7 @@ case WRITE:
 	imprima(raiz->esq);
 	fprintf(saida," ");
 
-	if(raiz->dir->token== TK_INT){
+	if(raiz->dir->token== INT){
 	fprintf(saida,"%%d");        
         fprintf(saida,"\"");
 	fprintf(saida,",");
@@ -897,7 +897,7 @@ case WRITE:
         fprintf(saida,"; ");
         fprintf(saida,"\n");
 	break;
-	}else if (raiz->dir->token== TK_FLOAT){
+	}else if (raiz->dir->token== FLOAT){
 	fprintf(saida,"%%f");        
         fprintf(saida,"\"");
 	fprintf(saida,",");
@@ -906,7 +906,7 @@ case WRITE:
         fprintf(saida,"; ");
         fprintf(saida,"\n");
 	break;
-	}else if (raiz->dir->token== TK_LETRA){
+	}else if (raiz->dir->token== CHAR){
 	fprintf(saida,"%%c");        
         fprintf(saida,"\"");
 	fprintf(saida,",");
