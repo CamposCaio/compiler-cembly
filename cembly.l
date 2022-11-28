@@ -17,7 +17,7 @@ extern "C" int yylex();
 
 %%
 "FOR" 		{return FOR;}
-"LOOP"	{return WHILE;}
+"LOOP"	{return LOOP;}
 "IF"		{return IF;}
 "ELSE"		{return ELSE;}
 "INT"  	{return INT;}

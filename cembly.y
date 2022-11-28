@@ -38,7 +38,7 @@ char *var_nome;
 
 /*Terminais*/
 %token <pont> FOR 	/*para*/
-%token <pont> WHILE /*enquanto*/
+%token <pont> LOOP /*enquanto*/
 %token <pont> IF 	/*se*/
 %token <pont> ELSE 	/*seNao*/
 %token <pont> WRITE/*imprime*/ 
@@ -441,9 +441,9 @@ for_comando: FOR '(' atribuicao ';' comparacao ')' bloco	//possibilita comando F
 
 
 /* comando Enquanto */
-while_comando: WHILE '(' comparacao ')' bloco 	//possibilita comando WHILE
+while_comando: LOOP '(' comparacao ')' bloco 	//possibilita comando LOOP
                      { $$ = (No*)malloc(sizeof(No));
-		       $$->token = WHILE;
+		       $$->token = LOOP;
 		       $$->lookahead1 = $3;
 		       $$->esq = $5;
 		       $$->dir = NULL;
@@ -752,7 +752,7 @@ void imprima(No *raiz){
       else fprintf(saida,"\n");
       break;
       
-    case WHILE:
+    case LOOP:
       fprintf(saida," \nwhile ");
       fprintf(saida,"(");
       imprima(raiz->lookahead1);
