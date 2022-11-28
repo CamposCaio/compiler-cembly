@@ -66,6 +66,7 @@ char *var_nome;
 %type <pont> programa
 %type <pont> lista_comandos
 %type <pont> bloco
+%type <pont> bloco_string
 %type <pont> string
 %type <pont> tipo_numerico
 %type <pont> atribuicao
@@ -125,6 +126,11 @@ bloco: START lista_comandos END
 			} 
 
 /* Bloco String */
+bloco_string: '"' lista_letras '"'
+			{ 
+			  $$ = $2; 
+			} 
+
 /* Reconhece Strings */
 string: LETRA       
 			{ 
@@ -135,7 +141,7 @@ string: LETRA
 		          $$->dir = NULL;
                         }
 
-/* Bloco String */
+/* Lista Letras */
 lista_letras: string lista_letras
 			{ 
 			  $$ = (No*)malloc(sizeof(No)); 			
@@ -378,14 +384,14 @@ if_comando:  IF '(' comparacao ')' bloco	//IF com apenas comparações
 
 /* comando Imprimir */
 /* Bloco com a regra para definir o eveto printf*/
-write_comando: WRITE '('  lista_letras  ')'		//imprime na tela apenas strings
+write_comando: WRITE '('  bloco_string  ')'		//imprime na tela apenas strings
 		{
 		 $$ = (No*)malloc(sizeof(No));
 		 $$->token = WRITE; 
 		 $$->esq = $3;
 		 $$->dir = NULL;
 		}
-	       |WRITE '('  lista_letras ',' tipo_numerico lista_letras ')' 	//imprime na tela strings e mais uma variavel numerica
+	       |WRITE '('  bloco_string ',' tipo_numerico lista_letras ')' 	//imprime na tela strings e mais uma variavel numerica
 		{
 		 $$ = (No*)malloc(sizeof(No));
 		 $$->token = WRITE; 
@@ -393,7 +399,7 @@ write_comando: WRITE '('  lista_letras  ')'		//imprime na tela apenas strings
 		 $$->dir = $5;
 		 $$->lookahead1 = $6;
 		}
-	       |WRITE '('  lista_letras ',' tipo_char lista_letras ')'		//imprime na tela strings e mais uma variavel do tipo char
+	       |WRITE '('  bloco_string ',' tipo_char lista_letras ')'		//imprime na tela strings e mais uma variavel do tipo char
 		{
 		 $$ = (No*)malloc(sizeof(No));
 		 $$->token = WRITE; 
