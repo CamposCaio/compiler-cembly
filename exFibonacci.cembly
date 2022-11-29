@@ -6,7 +6,7 @@ START
     INT result = 0;
     INT i = 0;
 
-    WRITE("Print the first N digits of the Fibonacci sequence N");
+    WRITE("Print the N digit of the Fibonacci sequence");
 
     READ_INT(n);
 
