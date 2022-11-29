@@ -1,0 +1,18 @@
+START
+
+    FLOAT n1;;
+    FLOAT n2;;
+    FLOAT n3;;
+    FLOAT n4;;
+
+    READ_FLOAT(n1);
+    READ_FLOAT(n2);
+    READ_FLOAT(n3);
+    READ_FLOAT(n4);
+
+    FLOAT soma = n1 + n2 + n3 + n4;
+    FLOAT media = soma / 4;
+
+    WRITE("media ", FLOAT media);
+
+FINISH
