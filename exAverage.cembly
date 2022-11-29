@@ -5,9 +5,16 @@ START
     FLOAT n3;;
     FLOAT n4;;
 
+    WRITE("Nota A");
     READ_FLOAT(n1);
+
+    WRITE("Nota B");
     READ_FLOAT(n2);
+
+    WRITE("Nota C");
     READ_FLOAT(n3);
+
+    WRITE("Nota D");
     READ_FLOAT(n4);
 
     FLOAT soma = n1 + n2 + n3 + n4;
