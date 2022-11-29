@@ -1,25 +1,28 @@
 START
 
-INT n = 0;
-INT first = 0;
-INT second = 1;
-INT result = 0;
-INT i = 0;
+    INT n = 0;
+    INT first = 0;
+    INT second = 1;
+    INT result = 0;
+    INT i = 0;
 
-WRITE("Print the first N digits of the Fibonacci seuqnce. N?\n");
-READ_INT(n);
-WRITE("Your Fibonacci seuqence with", INT n," digits is:\n")
+    WRITE("Print the first N digits of the Fibonacci sequence", INT n);
 
-LOOP(n<i) BEGIN
-    IF (i<=1) BEGIN
+    READ_INT(n);
+
+    LOOP (i < n) BEGIN
+        n = n - 1;
         result = i;
-    ELSE BEGIN
-        result = (first + second);
-        first = second;
-        second = result;
+        IF (i <= 1) BEGIN
+            result = i;
+        END
+        ELSE BEGIN
+            result = first + second;
+            first = second;
+            second = result;
+        END;
     END;
-    END;
-    WRITE(INT result," ");
-END;
+
+    WRITE("Resultado ", INT result);
 
 FINISH
