@@ -1,0 +1,16 @@
+START
+
+    INT fact = 1;
+    INT i;;
+    INT n;;
+
+    WRITE("Escolha um numero para calcular o fatorial");
+    READ_INT(n);
+
+    FOR (i = 1; i <= n) BEGIN
+        fact = fact * i;
+    END;
+
+    WRITE("Resultado ", INT fact);
+
+FINISH

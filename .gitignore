@@ -4,3 +4,6 @@ cembly.tab.h
 lex.yy.c
 *.cc
 saidaLog.txt
+exAverage
+exFibonacci
+exFatorial
