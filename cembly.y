@@ -269,6 +269,21 @@ exp:   lista_letras	//string
 		     	  $$->esq = $1;
 		      	  $$->dir = $3;
                    	}
+     | exp '*' exp   //reconhece multiplicação	  
+			{ 
+			  $$ = (No*)malloc(sizeof(No));
+                     	  $$->token = '*';
+		     	    $$->esq = $1;
+		      	  $$->dir = $3;
+                        }
+      | exp '/' exp   //reconhece divisão	  
+			{ 
+			  $$ = (No*)malloc(sizeof(No));
+                     	  $$->token = '/';
+		     	    $$->esq = $1;
+		      	  $$->dir = $3;
+                   	}
+
      |'(' exp ')' 	   //Possibilita o reconhecimento de uma exp que esteja entre parentese
 			{ 
 			  $$ = (No*)malloc(sizeof(No));
