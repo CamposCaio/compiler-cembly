@@ -6,7 +6,7 @@ START
     INT result = 0;
     INT i = 0;
 
-    WRITE("Print the first N digits of the Fibonacci sequence. N?");
+    WRITE("Print the first N digits of the Fibonacci sequence N");
 
     READ_INT(n);
 
@@ -14,7 +14,7 @@ START
         IF (i <= 1) BEGIN
             result = i;
             i = i + 1;
-        END;
+        END
         ELSE BEGIN
             result = first + second;
             first = second;
